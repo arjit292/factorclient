@@ -14,13 +14,14 @@ import javax.ws.rs.core.MediaType;
  */
 public class FactorClientApplication {
 
+
     public static void main(String [] argv){
         if(argv ==null || argv[0] == null){
             System.out.println("server name not provided please input <host>:<port>");
             return;
         }
         String serverUrl = argv[0];
-        serverUrl = "http://"+serverUrl+"/factor";
+        serverUrl = getUrl(serverUrl);
         if(argv[1] == null){
             System.out.println("number not given in input");
             return;
@@ -30,11 +31,19 @@ public class FactorClientApplication {
         String result="";
         try{
             result  = getClient().resource(serverUrl).path("/calculatefactor").type(MediaType.APPLICATION_JSON)
-                    .post(String.class, "{\"number\": "+number+"}");
+                    .post(String.class, getRequestEntity(number));
         }catch (Exception e){
             System.out.println("for number " + number +" got Exception" + e.getCause());
         }
         System.out.println(result);
+    }
+
+    private static String getRequestEntity(String number) {
+        return "{\"number\": "+number+"}";
+    }
+
+    private static String getUrl(String serverUrl) {
+        return "http://"+serverUrl+"/factor";
     }
 
     private static Client getClient(){
